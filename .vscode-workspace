@@ -1,0 +1,24 @@
+{
+  "folders": [
+    {
+      "name": "spec",
+      "path": "spec"
+    },
+    {
+      "name": "docs",
+      "path": "docs"
+    },
+    {
+      "name": "server",
+      "path": "apps/server"
+    },
+    {
+      "name": "client",
+      "path": "apps/client"
+    },
+    {
+      "name": "web",
+      "path": "apps/web"
+    }
+  ]
+}
