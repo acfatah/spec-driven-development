@@ -3,7 +3,7 @@
 This repository outlines my implementation of spec-driven development.
 
 <p>
-  <a href="https://github.com/acfatah/bun-hono-rest-api/commits/drizzle-sqlite">
+  <a href="https://github.com/acfatah/spec-driven-development/commits/main">
     <img
       alt="GitHub last commit (by committer)"
       src="https://img.shields.io/github/last-commit/acfatah/spec-driven-development?display_timestamp=committer&style=flat-square"></a>
