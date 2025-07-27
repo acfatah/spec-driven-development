@@ -40,17 +40,51 @@
 
 ## 4. Dependencies
 
+These are any external or internal factors your project relies on.
+
+**External Dependencies**: e.g., third-party APIs, DNS setups, SSL cert issuance, 
+or even waiting on a designer's UI mockups.
+
+**Internal Dependencies**: e.g., completing database migrations before starting 
+endpoint implementation, or setting up CI before adding test workflows.
+
+**Impact & Status**: Helps highlight bottlenecks early. A “High impact” pending 
+task could delay entire features.
+
 | ID | Dependency | Type | Owner | Status | Impact |
 |----|------------|------|-------|--------|--------|
 | D1 | [Dependency name] | External/Internal | [Owner] | Pending | High/Medium/Low |
 
 ## 5. Risk Assessment
 
+This identifies potential threats to your timeline, security, or functionality—then 
+sets a plan to handle them.
+
+**Probability**: How likely it is to happen (e.g., “High” for Bun breaking semver 
+compatibility).
+
+**Impact**: What damage it would cause (e.g., “High” if a failed migration corrupts 
+production data).
+
+**Mitigation**: Your defense strategy. Like using bun.lockb and Docker for r
+eproducibility, or dry-run migrations before deployment.
+
 | Risk | Probability | Impact | Mitigation Strategy | Owner |
 |------|-------------|--------|---------------------|-------|
 | [Risk description] | High/Medium/Low | High/Medium/Low | [Mitigation steps] | [Owner] |
 
 ## 6. Resource Allocation
+
+This maps who’s doing what, when, and how much effort it takes.
+
+**Role & Name**: Backend Dev, DevOps, QA, etc. In a solo setup, you're probably 
+all three!
+
+**Allocation %**: If someone’s working part-time (e.g. “60% on this project during 
+August”), you can plan more realistically.
+
+**Time Period & Notes**: Track when folks are available and if anything might affect 
+bandwidth (like “on-call for another team this sprint”).
 
 | Resource | Role | Allocation (%) | Time Period | Notes |
 |----------|------|----------------|--------------|-------|
