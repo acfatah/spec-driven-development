@@ -1,0 +1,16 @@
+{
+  "name": "spec-driven-development",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/common-tags": "^1.8.4",
+    "common-tags": "^1.8.2",
+    "oxc-parser": "^0.82.3"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
