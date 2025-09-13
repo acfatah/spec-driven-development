@@ -51,3 +51,7 @@ This repository outlines my implementation of spec-driven development.
 - EARS format (Easy Approach to Requirements Syntax)  
   https://alistairmavin.com/ears
 - https://choosealicense.com
+- https://github.com/github/spec-kit
+
+<!-- video abou spec-kit -->
+- https://www.youtube.com/watch?v=em3vIT9aUsg&ab_channel=BetterStack
