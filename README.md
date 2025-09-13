@@ -24,18 +24,21 @@ This repository outlines my implementation of spec-driven development.
 │   ├── docs
 │   ├── server
 │   └── web
+├── data
 ├── res
 ├── scripts
-└── spec
-    ├── 00-requirements.md
-    ├── 01-design.md
-    ├── 02-tasks.md
-    ├── 03-deployment.md
-    └── 04-monitoring.md
+└── specs
+    └── guide
+        ├── 00-requirements.md
+        ├── 01-design.md
+        ├── 02-tasks.md
+        ├── 03-deployment.md
+        └── 04-monitoring.md
 ```
 
 - `LICENCE` optionaly define license
 - `apps` contains applications or modules
+- `data` contains datasets, sample data, or database files
 - `res` contains all the non-code resources
 - `scripts` contains tasks or automation scripts
 - `spec` contains the specification documents
