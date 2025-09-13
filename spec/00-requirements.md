@@ -1,7 +1,8 @@
 # Project Requirements
 
 ## 1. Project Overview
-[Provide a brief but comprehensive overview of the project, its purpose, and the problems it aims to solve.]
+[Provide a brief but comprehensive overview of the project, its purpose, and the 
+problems it aims to solve.]
 
 
 ## 2. Business Goals
@@ -11,6 +12,10 @@
 
 
 ## 3. User Personas
+
+A user persona is a semi-fictional representation of a typical user based on real 
+data and observation. It is used to help designers, product managers, and engineers 
+to focus on the user's needs and goals when creating a product.
 
 | Persona | Description | Goals | Pain Points |
 |---------|-------------|-------|-------------|
