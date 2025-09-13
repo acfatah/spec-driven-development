@@ -3,10 +3,10 @@
 This repository outlines my implementation of spec-driven development.
 
 <p>
-  <a href="https://github.com/acfatah/spec-driven-development/commits/main">
+  <a href="https://github.com/acfatah/spec-driven-development/commits/draft-01">
     <img
       alt="GitHub last commit (by committer)"
-      src="https://img.shields.io/github/last-commit/acfatah/spec-driven-development?display_timestamp=committer&style=flat-square"></a>
+      src="https://img.shields.io/github/last-commit/acfatah/spec-driven-development/draft-01?display_timestamp=committer&style=flat-square"></a>
 </p>
 
 > [!IMPORTANT]
