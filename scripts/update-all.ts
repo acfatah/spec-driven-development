@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
 /**
- * Script to update all Bun apps in the "apps" directory.
+ * Script to update all Bun apps in the 'apps' directory.
  */
 
 import type { Dirent } from 'node:fs'
@@ -9,23 +9,27 @@ import Bun from 'bun'
 import { join } from 'pathe'
 import { readDir } from './utils'
 
-const DEFAULT_APP_PATH = 'apps'
+const TARGET_DIR = 'apps'
 
-async function updateTemplate(dirent: Dirent): Promise<void> {
-  const appPath = join(dirent.parentPath, dirent.name)
-  const versionFile = join(appPath, '.bun-version')
+/**
+ * Update dependencies in the given directory.
+ */
+async function updateDeps(target: string | Dirent): Promise<void> {
+  const path = typeof target === 'string' ? target : join(target.parentPath, target.name)
+  const versionFile = join(path, '.bun-version')
+  const pathName = path === '.' ? 'root' : `"${path}"`
 
-  // Update .bun-version file
+  // Update .bun-version file to follow the Bun version on the system
   await Bun.$`bun --version > ${versionFile}`
 
   // Update packages
-  console.log(`Updating "${appPath}" apps...`)
+  console.log(`Updating "${pathName}" app...`)
 
   const proc = Bun.spawn(
     ['bun', 'update'],
     {
-      cwd: appPath,
-      stdout: 'ignore',
+      cwd: path,
+      stdout: 'pipe',
       stderr: 'pipe',
     },
   )
@@ -33,32 +37,37 @@ async function updateTemplate(dirent: Dirent): Promise<void> {
   const exitCode = await proc.exited
 
   if (exitCode) {
-    let errorMessage = ''
+    const [stderrText, stdoutText] = await Promise.all([
+      proc.stderr ? new Response(proc.stderr).text() : Promise.resolve(''),
+      proc.stdout ? new Response(proc.stdout).text() : Promise.resolve(''),
+    ])
 
-    if (proc.stderr) {
-      const chunks: Uint8Array[] = []
-
-      for await (const chunk of proc.stderr) {
-        chunks.push(chunk)
+    console.error(`ERROR: Failed to update "${path}" (exit ${exitCode})`)
+    console.group(`Error details for "${path}" (exit ${exitCode}):`)
+    const message = [stderrText, stdoutText].filter(Boolean).join('\n')
+    if (message) {
+      for (const line of message.split(/\r?\n/)) {
+        console.error(line)
       }
-
-      errorMessage = new TextDecoder().decode(Buffer.concat(chunks))
     }
-
-    console.group(`Error updating "${appPath}":`)
-    console.error(errorMessage)
+    else {
+      console.error(
+        'Process failed with no output. Consider setting stdout to "pipe" or "inherit" in Bun.spawn to capture stack traces.',
+      )
+    }
     console.groupEnd()
   }
   else {
-    console.log(`Done updating "${appPath}".`)
+    console.log(`Done updating "${pathName}".`)
   }
 }
 
 async function main() {
-  // Update .bun-version file
+  // Update root directory
   await Bun.$`bun --version > .bun-version`
+  await updateDeps('.')
 
-  const dir = await readDir(DEFAULT_APP_PATH, {
+  const dir = await readDir(TARGET_DIR, {
     withFileTypes: true,
   }) as Dirent[]
 
@@ -69,7 +78,7 @@ async function main() {
       continue
 
     tasks.push(
-      updateTemplate(dirent),
+      updateDeps(dirent),
     )
   }
 
