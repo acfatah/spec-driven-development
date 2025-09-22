@@ -13,7 +13,7 @@ function toPascalCase(name: string) {
 }
 
 const SCHEMA_PATH = './apps/server/src/db/schema'
-const OUTPUT_FILE = './shared/types/schema.ts'
+const OUTPUT_FILE = './shared/src/types/schema.ts'
 
 /** Directory entries */
 const schemaDirectory = await readdir(SCHEMA_PATH, { withFileTypes: true })
