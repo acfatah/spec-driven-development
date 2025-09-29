@@ -1,0 +1,29 @@
+{
+  "name": "packages-shared",
+  "type": "module",
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "lint": "bunx --bun eslint",
+    "lint:changed": "bunx --bun eslint --pass-on-no-patterns --no-warn-ignored $(git diff --relative --name-only --diff-filter=d HEAD)",
+    "lint:staged": "bunx --bun eslint --pass-on-no-patterns --no-warn-ignored $(git diff --relative --cached --name-only --diff-filter=d)",
+    "lint:inspect": "bunx --bun eslint --inspect-config",
+    "format": "changed_files=$(git diff --relative --name-only --diff-filter=d HEAD); bunx --bun eslint --fix --no-warn-ignored $changed_files",
+    "format:staged": "staged_files=$(git diff --relative --cached --name-only --diff-filter=d); bunx --bun eslint --fix --pass-on-no-patterns --no-warn-ignored $staged_files && git add $staged_files",
+    "typecheck": "tsc --noEmit",
+    "typecheck:tsgo": "tsgo --noEmit"
+  },
+  "peerDependencies": {
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "zod": "^4.1.11"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^4.19.0",
+    "@types/bun": "latest",
+    "eslint": "^9.36.0",
+    "eslint-plugin-format": "^1.0.2"
+  }
+}

@@ -1,0 +1,3 @@
+/**
+ * Shared types between applications
+ */
