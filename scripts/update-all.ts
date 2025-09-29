@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
 /**
- * Script to update all Bun apps in the 'apps' directory.
+ * Script to update all Bun apps in the specified directories.
  */
 
 import type { Dirent } from 'node:fs'
@@ -10,7 +10,7 @@ import process from 'node:process'
 import { join } from 'pathe'
 import { readDir } from './utils'
 
-const TARGET_DIR = 'apps'
+const TARGET_DIRS = ['apps', 'packages'] as const
 
 /**
  * Update dependencies in the given directory.
@@ -19,6 +19,12 @@ async function updateDeps(target: string | Dirent): Promise<void> {
   const path = typeof target === 'string' ? target : join(target.parentPath, target.name)
   const versionFile = join(path, '.bun-version')
   const pathName = path === '.' ? 'root' : `"${path}"`
+  const packageFile = Bun.file(join(path, 'package.json'))
+
+  if (!await packageFile.exists()) {
+    console.log(`Skipping "${pathName}", no package.json found.`)
+    return
+  }
 
   // Update .bun-version file to follow the Bun version on the system
   await Bun.$`bun --version > ${versionFile}`
@@ -28,7 +34,6 @@ async function updateDeps(target: string | Dirent): Promise<void> {
 
   const proc = Bun.spawn(['bun', 'update'], {
     cwd: path,
-    // Avoid backpressure: stream directly to terminal
     stdout: 'inherit',
     stderr: 'inherit',
   })
@@ -60,26 +65,36 @@ async function updateDeps(target: string | Dirent): Promise<void> {
   }
 }
 
-async function main() {
-  // Update root directory
-  await Bun.$`bun --version > .bun-version`
-  await updateDeps('.')
+async function processTargetDirectory(base: string) {
+  let dir: Dirent[]
+  try {
+    dir = await readDir(base, { withFileTypes: true }) as Dirent[]
+  }
+  catch (e) {
+    console.warn(`Skipping "${base}" (not found or unreadable).`)
+    return
+  }
 
-  const dir = await readDir(TARGET_DIR, {
-    withFileTypes: true,
-  }) as Dirent[]
-
-  // Run sequentially to avoid backpressure and resource spikes
   for (const dirent of dir) {
     if (!dirent.isDirectory())
       continue
-
     try {
       await updateDeps(dirent)
     }
     catch (error) {
       console.error(`An error occurred during the update of "${join(dirent.parentPath, dirent.name)}":`, error)
     }
+  }
+}
+
+async function main() {
+  // Update root directory
+  await Bun.$`bun --version > .bun-version`
+  await updateDeps('.')
+
+  // Sequentially process each target directory
+  for (const target of TARGET_DIRS) {
+    await processTargetDirectory(target)
   }
 
   console.log('All updates completed.')
