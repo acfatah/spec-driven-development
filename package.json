@@ -2,7 +2,8 @@
   "name": "spec-driven-development",
   "private": true,
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "packages/*"
   ],
   "scripts": {
     "update:all": "bun scripts/update-all.ts",
