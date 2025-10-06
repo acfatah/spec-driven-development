@@ -12,38 +12,61 @@ This repository outlines my implementation of spec-driven development.
 > [!IMPORTANT]
 > Still in draft
 
+## Usage
+
+Create a new directory, `cd` into it, and run:
+
+```bash
+bunx --bun tiged acfatah/spec-driven-development/templates/starter
+```
+
 ## Directory Structure
 
 ```
 .
-├── CHANGELOG.md
-├── LICENSE
+├── guide                    # contains the guide on how to write specs
+│   ├── 00-requirements.md
+│   ├── 01-design.md
+│   ├── 02-tasks.md
+│   ├── 03-deployment.md
+│   └── 04-monitoring.md
+├── templates
+│   └── starter
+│       ├── CHANGELOG.md     # optionaly generate changelog using script
+│       ├── LICENSE          # optionaly define license
+│       ├── package.json
+│       ├── apps             # contains applications or modules
+│       │   ├── client
+│       │   ├── docs
+│       │   ├── server
+│       │   └── web
+│       ├── data             # contains hard-coded data files or database related stuff 
+│       ├── packages         # contains shared packages or libraries
+│       │   └── shared
+│       ├── res              # contains all the non-code resources
+│       ├── scripts          # contains tasks or automation scripts
+│       └── specs            # contains the specification documents
 ├── README.md
-├── apps
-│   ├── client
-│   ├── docs
-│   ├── server
-│   └── web
-├── res
-├── scripts
-└── spec
-    ├── 00-requirements.md
-    ├── 01-design.md
-    ├── 02-tasks.md
-    ├── 03-deployment.md
-    └── 04-monitoring.md
+└── CHANGELOG.md
 ```
 
-- `LICENCE` optionaly define license
-- `apps` contains applications or modules
-- `res` contains all the non-code resources
-- `scripts` contains tasks or automation scripts
-- `spec` contains the specification documents
+Read more detail from the `guide` directory.
 
 ## Goals
 
-- Enable rapid development
-- Allow AI to maintain it in the future
+- Promote a spec-first workflow that drives test generation, acceptance criteria,
+    and contract tests
+- Standardize specification formats, linting rules, and validation to reduce
+    ambiguity and onboarding friction
+- Foster collaboration by offering review workflows, contribution templates, and
+    clear roles for authors, reviewers, and maintainers
+- Accelerate development velocity by providing reusable specification templates, 
+    automated scaffolding, and CI/CD-ready artifacts to minimize setup time and 
+    shorten iteration cycles
+- Offer automation hooks (scaffolders, code-generation, test runners) to reduce
+    manual effort and prevent divergence between spec and implementation
+- Enable AI-assisted maintenance to keep specifications and documentation current 
+    through automated updates and reviews
 
 ## Resources
 
