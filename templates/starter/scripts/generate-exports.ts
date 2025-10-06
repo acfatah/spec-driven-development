@@ -2,6 +2,11 @@
 
 /**
  * Generate an index.ts file that exports all script files from a given directory.
+ *
+ * @deprecated This file is deprecated and will be removed in a future release.
+ *
+ * We shouldn't import from backend files because it will be included in the frontend
+ * bundle.
  */
 
 import type { Dirent } from 'node:fs'
