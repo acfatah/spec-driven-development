@@ -1,13 +1,13 @@
+/**
+ * General purposes utility functions.
+ */
+
+import Bun from 'bun'
 import { existsSync } from 'node:fs'
 import { readdir } from 'node:fs/promises'
+import process from 'node:process'
+import Readline from 'node:readline'
 
-/**
- * Utility functions for general purposes.
- */
-
-/**
- * Reads the contents of a directory.
- */
 export async function readDir(
   path: string,
   options: {
@@ -19,27 +19,25 @@ export async function readDir(
   if (!existsSync(path)) {
     throw new Error(`The directory "${path}" does not exist.`)
   }
+
   // @ts-expect-error Ignore readdir options type mismatch
   return readdir(path, options)
 }
 
-import Bun from 'bun'
-
 /**
- * Reads a file as text.
+ * Simple readFile as text.
  */
 export async function readFile(filepath: string, _options = {}) {
   const file = Bun.file(filepath)
+
   if (!file.exists())
     throw new Error(`The path "${filepath}" does not exists.`)
+
   return await file.text()
 }
 
-import process from 'node:process'
-import Readline from 'node:readline'
-
 /**
- * Reads a line from stdin.
+ * Simple readLine
  */
 export function readLine(): Promise<string> {
   return new Promise((resolve) => {
@@ -47,6 +45,7 @@ export function readLine(): Promise<string> {
       input: process.stdin,
       output: process.stdout,
     })
+
     rl.on('line', (line) => {
       resolve(line.trim())
       rl.close()
@@ -55,7 +54,7 @@ export function readLine(): Promise<string> {
 }
 
 /**
- * Writes data to a file.
+ * @see https://bun.sh/docs/api/file-io#writing-files-bun-write
  */
 export async function writeFile(
   destination: string,
