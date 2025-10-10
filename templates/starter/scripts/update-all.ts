@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
 /**
- * Script to update SOURCE_DIRS.
+ * Script to update all TARGET_DIRS.
  */
 
 import type { Dirent } from 'node:fs'
@@ -10,7 +10,9 @@ import process from 'node:process'
 import { join } from 'pathe'
 import { readDir } from './utils'
 
-const SOURCE_DIRS = ['apps', 'packages']
+const TARGET_DIRS = ['apps', 'packages']
+const argv = Array.isArray((Bun as any)?.argv) ? (Bun as any).argv.slice(2) : process.argv.slice(2)
+const useLatest = argv.includes('--latest')
 
 /**
  * Update dependencies in the given directory.
@@ -26,7 +28,11 @@ async function updateDeps(target: string | Dirent): Promise<void> {
   // Update packages
   console.log(`Updating "${pathName}"`)
 
-  const proc = Bun.spawn(['bun', 'update'], {
+  const args = ['bun', 'update'] as string[]
+  if (useLatest)
+    args.push('--latest')
+
+  const proc = Bun.spawn(args, {
     cwd: path,
     // Avoid backpressure: stream directly to terminal
     stdout: 'inherit',
@@ -65,22 +71,22 @@ async function main() {
   await Bun.$`bun --version > .bun-version`
   await updateDeps('.')
 
-  const dir = (await readDir('.', {
-    withFileTypes: true,
-  }) as Dirent[]).filter(
-    dirent => SOURCE_DIRS.includes(dirent.name),
-  )
+  for (const targetDir of TARGET_DIRS) {
+    const dir = await readDir(targetDir, {
+      withFileTypes: true,
+    }) as Dirent[]
 
-  // Run sequentially to avoid backpressure and resource spikes
-  for (const dirent of dir) {
-    if (!dirent.isDirectory())
-      continue
+    // Run sequentially to avoid backpressure and resource spikes per template set
+    for (const dirent of dir) {
+      if (!dirent.isDirectory())
+        continue
 
-    try {
-      await updateDeps(dirent)
-    }
-    catch (error) {
-      console.error(`An error occurred during the update of "${join(dirent.parentPath, dirent.name)}":`, error)
+      try {
+        await updateDeps(dirent)
+      }
+      catch (error) {
+        console.error(`An error occurred during the update of "${join(dirent.parentPath, dirent.name)}":`, error)
+      }
     }
   }
 
