@@ -2,11 +2,6 @@
 
 /**
  * Generate an index.ts file that exports all script files from a given directory.
- *
- * @deprecated This file is deprecated and will be removed in a future release.
- *
- * We shouldn't import from backend files because it will be included in the frontend
- * bundle.
  */
 
 import type { Dirent } from 'node:fs'
@@ -43,12 +38,25 @@ try {
   options = values
   args = positionals.slice(2)
 }
-catch (error: any) {
-  if (error.code === 'ERR_PARSE_ARGS_INVALID_OPTION_VALUE') {
+catch (error: unknown) {
+  if (
+    typeof error === 'object'
+    && error !== null
+    && 'code' in error
+    && (error as { code?: string }).code === 'ERR_PARSE_ARGS_INVALID_OPTION_VALUE'
+  ) {
     console.error('Error: Invalid option value. Use --help to see all valid options.')
   }
+  else if (
+    typeof error === 'object'
+    && error !== null
+    && 'message' in error
+    && typeof (error as { message?: unknown }).message === 'string'
+  ) {
+    console.error(`Error: ${(error as { message: string }).message}`)
+  }
   else {
-    console.error(`Error: ${error.message}`)
+    console.error('Error: Unknown error')
   }
 
   process.exit(1)
@@ -81,7 +89,7 @@ async function main() {
     return helpMessage()
 
   const destination = args[0]
-  const dir = await readDir(destination, {
+  const dir = await readDir(destination ?? '', {
     withFileTypes: true,
   }) as Dirent[]
   let content = ''
@@ -90,14 +98,14 @@ async function main() {
     if (!dirent.isFile())
       continue
 
-    if (dirent.name.match(/index\.(ts|js)/))
+    if (dirent.name.match(/index\.(?:ts|js)/))
       continue
 
     content += `export * from './${dirent.name}'`
     content += '\n'
   }
 
-  const indexFile = Bun.file(`${join(destination, 'index.ts')}`)
+  const indexFile = Bun.file(`${join(destination ?? '', 'index.ts')}`)
 
   if (await indexFile.exists()) {
     process.stdout.write(`${indexFile.name} already exists. Overwrite? [No] \n> `)
@@ -109,11 +117,11 @@ async function main() {
   }
 
   try {
-    writeFile(indexFile.name as string, content)
+    await writeFile(indexFile.name as string, content)
   }
   catch (error) {
     console.error(error)
   }
 }
 
-main()
+void main()

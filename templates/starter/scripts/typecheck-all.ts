@@ -6,7 +6,7 @@ import process from 'node:process'
 import { join } from 'pathe'
 import { readDir } from './utils'
 
-const SOURCE_DIRS = ['client', 'server', 'shared']
+const TARGET_DIRS = ['apps', 'packages']
 const tsgo = Bun.argv[2] === '--tsgo'
 
 /** Script names that can be used to typecheck an app. */
@@ -64,15 +64,31 @@ async function typecheckApp(
 async function getScriptNameIfExists(appPath: string): Promise<TypecheckScript | null> {
   try {
     const pkgFile = Bun.file(join(appPath, 'package.json'))
+    const pkgFileExists = await pkgFile.exists()
 
-    if (!(await pkgFile.exists()))
+    if (!pkgFileExists)
       return null
 
-    const json = await pkgFile.json()
-    const scripts = (json && json.scripts) || {}
-    const desired = tsgo ? 'typecheck:tsgo' : 'typecheck'
+    const raw = await pkgFile.json() as Record<string, unknown>
+    if (typeof raw !== 'object' || raw === null)
+      return null
 
-    return scripts[desired] ? desired : null
+    const scripts = (raw as { scripts?: Record<string, string> }).scripts
+    if (!scripts || typeof scripts !== 'object')
+      return null
+
+    const desired = tsgo ? 'typecheck:tsgo' : 'typecheck'
+    const scriptValue = scripts[desired]
+
+    if (
+      scriptValue === undefined
+      || typeof scriptValue !== 'string'
+      || scriptValue.trim().length === 0
+    ) {
+      return null
+    }
+
+    return desired
   }
   catch {
     return null
@@ -80,33 +96,37 @@ async function getScriptNameIfExists(appPath: string): Promise<TypecheckScript |
 }
 
 async function main() {
-  const dir = (await readDir('.', {
-    withFileTypes: true,
-  }) as Dirent[]).filter(
-    dirent => SOURCE_DIRS.includes(dirent.name),
-  )
+  for (const targetDir of TARGET_DIRS) {
+    const dir = await readDir(targetDir, {
+      withFileTypes: true,
+    })
 
-  for (const dirent of dir) {
-    if (!dirent.isDirectory())
-      continue
+    for (const dirent of dir) {
+      if (!dirent.isDirectory())
+        continue
 
-    const appPath = join(dirent.parentPath, dirent.name)
-    const scriptName = await getScriptNameIfExists(appPath)
+      // skip _ directory
+      if (dirent.name === '_')
+        continue
 
-    if (!scriptName) {
-      console.log(`Skipping "${appPath}": no ${tsgo ? 'typecheck:tsgo' : 'typecheck'} script in package.json`)
-      continue
-    }
+      const appPath = join(dirent.parentPath, dirent.name)
+      const scriptName = await getScriptNameIfExists(appPath)
 
-    try {
-      await typecheckApp(dirent, scriptName)
-    }
-    catch (error) {
-      console.error(`Unexpected error while typechecking "${appPath}":`, error)
+      if (!scriptName) {
+        console.log(`Skipping "${appPath}": no ${tsgo ? 'typecheck:tsgo' : 'typecheck'} script in package.json`)
+        continue
+      }
+
+      try {
+        await typecheckApp(dirent, scriptName)
+      }
+      catch (error) {
+        console.error(`Unexpected error while typechecking "${appPath}":`, error)
+      }
     }
   }
 
   console.log('All typechecks completed.')
 }
 
-main()
+void main()
