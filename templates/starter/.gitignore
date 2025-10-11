@@ -14,7 +14,8 @@ coverage
 build
 dist
 out
-*.sql*
+*.db
+*.sqlite*
 
 # misc
 tmp
