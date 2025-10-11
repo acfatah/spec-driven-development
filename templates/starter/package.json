@@ -16,9 +16,13 @@
     "typescript": "^5"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^5.4.1",
     "@types/bun": "latest",
     "@types/common-tags": "^1.8.4",
     "common-tags": "^1.8.2",
+    "eslint": "^9.37.0",
+    "eslint-plugin-format": "^1.0.2",
+    "jiti": "^2.6.1",
     "oxc-parser": "^0.82.3",
     "pathe": "^2.0.3",
     "simple-git-hooks": "^2.13.1"
