@@ -7,7 +7,8 @@
   ],
   "scripts": {
     "update:all": "bun scripts/update-all.ts",
-    "lint:staged": "bunx --bun eslint --pass-on-no-patterns --no-warn-ignored $(git diff --relative --cached --name-only --diff-filter=d)",
+    "lint": "bun scripts/lint-all.ts",
+    "lint:staged": "bun scripts/lint-all.ts --staged",
     "typecheck": "bun scripts/typecheck-all.ts",
     "typecheck:tsgo": "bun scripts/typecheck-all.ts --tsgo",
     "precommit": "bun run lint:staged"
